@@ -1,3 +1,13 @@
+--All tables 
+
+SELECT * FROM employee LIMIT 10;
+SELECT * FROM customer LIMIT 10;
+SELECT * FROM model LIMIT 10;
+SELECT * FROM inventory LIMIT 10;
+SELECT * FROM sales LIMIT 10;
+
+
+
 first chapter
 --### Create a list of employees and their immediate managers.
 
@@ -51,6 +61,23 @@ ORDER BY NumOfCarsSold DESC;
 
 --## Find the least and most expensive car sold by each employee this year
 
+SELECT MIN(s.salesAmount) as minAmount , MAX(s.salesAmount) as maxAmount , e.firstName  from employee e inner join sales s on s.employeeId = e.employeeId WHERE s.soldDate >= date('now','start of year') GROUP BY e.employeeId ORDER by maxAmount;
+select MAX(s.soldDate) from sales s 
+
+-- Display report for employees who have sold at least 5 cars
+
+SELECT e.employeeId , count(*) as saleCount FROM employee e inner JOIN sales s on s.employeeId = e.employeeId  GROUP by s.employeeId HAVING  saleCount >= 5  ;
+
+
+3rd chapter
+-- Summarise sales per year by using a CTE
+WITH SalePerYear AS (
+SELECT strftime('%Y' , soldDate) as soldYear, salesAmount  FROM sales
+)
+SELECT soldYear,  FORMAT('$%.2f', SUM(salesAmount)) as   TotalSum FROM SalePerYear GROUP BY soldYear ORDER BY soldYear;
+
+SELECT * from sales
+-- Display cars sold for each employee by month
 
 
 
