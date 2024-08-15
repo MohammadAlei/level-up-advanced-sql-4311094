@@ -70,15 +70,40 @@ SELECT e.employeeId , count(*) as saleCount FROM employee e inner JOIN sales s o
 
 
 3rd chapter
--- Summarise sales per year by using a CTE
+-- Q Summarise sales per year by using a CTE
 WITH SalePerYear AS (
 SELECT strftime('%Y' , soldDate) as soldYear, salesAmount  FROM sales
 )
 SELECT soldYear,  FORMAT('$%.2f', SUM(salesAmount)) as   TotalSum FROM SalePerYear GROUP BY soldYear ORDER BY soldYear;
 
-SELECT * from sales
--- Display cars sold for each employee by month
+SELECT * from sales limit 10;
+SELECT * from employee LIMIT 10;
+
+--Q Display cars sold for each employee by month
 
 
+SELECT e.employeeId as EmpId, e.firstName , e.lastName , s.soldDate as soldDate , s.salesAmount,
+  sum(CASE when strftime('%m','01') = '01' THEN salesAmount END) as janSales ,
+ sum(CASE when strftime('%m','02') = '02' THEN salesAmount END) as febSales ,
+ sum(CASE when strftime('%m','03') = '03' THEN salesAmount END) as marchSales ,
+ sum(CASE when strftime('%m','04') = '04' THEN salesAmount END) as AprSales ,
+  sum(CASE when strftime('%m','05') = '05' THEN salesAmount END) as MaySales ,
+ sum(CASE when strftime('%m','06') = '06' THEN salesAmount END) as  JuneSales ,
+ sum(CASE when strftime('%m','07') = '07' THEN salesAmount END) as JulySales ,
+  sum(CASE when strftime('%m','08') = '08' THEN salesAmount END) as AugSales ,
+  sum(CASE when strftime('%m','09') = '09' THEN salesAmount END) as SepSales ,
+ sum(CASE when strftime('%m','10') = '10' THEN salesAmount END) as OctSales ,
+ sum(CASE when strftime('%m','11') = '11' THEN salesAmount END) as NovSales ,
+  sum(CASE when strftime('%m','12') = '12' THEN salesAmount END) as DecSales 
+  from employee e INNER JOIN sales s
+ on e.employeeId = s.employeeId where soldDate BETWEEN '2021-01-01' AND '2021-12-31' GROUP BY s.employeeId    order by EmpId;
 
+-- Q Find sales of cars which are electric by using a subquery
 
+select * from sales s WHERE inventoryId in 
+(SELECT inventoryId from inventory i INNER JOIN model m on m.modelId = i.modelId where m.EngineType = 'Electric');
+
+-- or this way
+
+select s.soldDate , s.salesAmount , i.colour , i.year from sales s INNER JOIN inventory i  on s.inventoryId = i.inventoryId
+where i.modelId in (SELECT modelId from model as m where m.EngineType = 'Electric');
